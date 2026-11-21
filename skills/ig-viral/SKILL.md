@@ -12,6 +12,11 @@ description: >-
 
 # ig-viral
 
+> **GRØNN:** lees eerst `templates/voice.md` in deze plugin (twee mappen boven
+> deze skill), of `~/.claude/instagram/voice.md` als die bestaat. Die huisregels
+> gaan voor alles hieronder: Nederlands, geen hashtags, nooit twee keer dezelfde
+> emoji, dienst + plaats in de tekst, niets hergebruiken, nooit publiceren.
+
 The research skill. Everything else in this pack writes; this one goes and
 looks. Run it monthly, not daily. Formulas last a season.
 

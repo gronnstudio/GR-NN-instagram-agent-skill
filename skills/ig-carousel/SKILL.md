@@ -9,6 +9,11 @@ description: >-
 
 # ig-carousel
 
+> **GRØNN:** lees eerst `templates/voice.md` in deze plugin (twee mappen boven
+> deze skill), of `~/.claude/instagram/voice.md` als die bestaat. Die huisregels
+> gaan voor alles hieronder: Nederlands, geen hashtags, nooit twee keer dezelfde
+> emoji, dienst + plaats in de tekst, niets hergebruiken, nooit publiceren.
+
 Carousels are the highest-dwell format on the grid, because a swipe is an
 interaction and a scroll is not. They also get a second chance: Instagram can
 show a carousel again starting from a later slide to someone who did not engage

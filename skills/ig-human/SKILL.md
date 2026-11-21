@@ -11,6 +11,11 @@ description: >-
 
 # ig-human
 
+> **GRØNN:** lees eerst `templates/voice.md` in deze plugin (twee mappen boven
+> deze skill), of `~/.claude/instagram/voice.md` als die bestaat. Die huisregels
+> gaan voor alles hieronder: Nederlands, geen hashtags, nooit twee keer dezelfde
+> emoji, dienst + plaats in de tekst, niets hergebruiken, nooit publiceren.
+
 Two tools live in this folder and they both actually run. Use them. Do not
 eyeball this.
 
@@ -20,9 +25,9 @@ python3 detect.py draft.txt                    # score it, five checks
 python3 detect.py before.txt after.txt         # prove the delta
 ```
 
-Both read `slop.json`: 154 stock words and phrases with plain-English
+Both read `slop.json`: 189 stock words and phrases (English and Dutch) with plain
 replacements, 18 invisible character classes, 11 typographic substitutions and
-16 structural tells. The last block of each list is Instagram-specific, the
+21 structural tells. The last block of each list is Instagram-specific, the
 vocabulary that only shows up in captions and voiceovers. It is meant to be
 edited. If the user has a word they always use that the lexicon strips, take it
 out of the file.

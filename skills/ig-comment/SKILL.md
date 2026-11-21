@@ -9,6 +9,11 @@ description: >-
 
 # ig-comment
 
+> **GRØNN:** lees eerst `templates/voice.md` in deze plugin (twee mappen boven
+> deze skill), of `~/.claude/instagram/voice.md` als die bestaat. Die huisregels
+> gaan voor alles hieronder: Nederlands, geen hashtags, nooit twee keer dezelfde
+> emoji, dienst + plaats in de tekst, niets hergebruiken, nooit publiceren.
+
 Commenting is the highest-leverage twenty minutes on Instagram and the easiest
 to do badly. A comment near the top of a reel with 40,000 views is seen by more
 people than most accounts' own posts, and it is the one place where a stranger

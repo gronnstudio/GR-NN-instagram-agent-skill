@@ -1,18 +1,19 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "instagram-agent-skill",
-  "description": "The Instagram agent skill pack for Claude",
+  "name": "gronn-instagram",
+  "description": "GRØNN Studio fork of the Instagram agent skill pack for Claude",
   "owner": {
-    "name": "Jake Schincariol",
-    "url": "https://opusjake.ai"
+    "name": "GRØNN Studio",
+    "url": "https://gronn.studio"
   },
   "plugins": [
     {
       "name": "instagram-agent",
-      "description": "Thirteen Claude skills that run an Instagram account, including a scored hook panel, a viral research skill, a caption linter and a humanizer.",
+      "description": "Thirteen Claude skills that run the GRØNN Studio Instagram account: Dutch-aware hook score, caption linter with the GRØNN rules (no hashtags, no emoji twice, service + place), and a humanizer with a Dutch lexicon. Fork of Jakeschincariol/instagram-agent-skill.",
       "source": "./",
       "category": "productivity",
-      "homepage": "https://github.com/Jakeschincariol/instagram-agent-skill"
+      "homepage": "https://github.com/gronnstudio/GR-NN-instagram-agent-skill",
+      "version": "1.1.0"
     }
   ]
 }

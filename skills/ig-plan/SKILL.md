@@ -9,12 +9,17 @@ description: >-
 
 # ig-plan
 
+> **GRØNN:** lees eerst `templates/voice.md` in deze plugin (twee mappen boven
+> deze skill), of `~/.claude/instagram/voice.md` als die bestaat. Die huisregels
+> gaan voor alles hieronder: Nederlands, geen hashtags, nooit twee keer dezelfde
+> emoji, dienst + plaats in de tekst, niets hergebruiken, nooit publiceren.
+
 The control room. Everything else in this pack executes; this decides what gets
 executed. Run it once a week, on the same day.
 
 ## Input
 
-If `~/.claude/instagram/voice.md`, `swipe.md` and `log.md` exist, read them.
+If `~/.claude/instagram/voice.md`, `swipe.md` and `log.md` exist, read them. Without a voice.md there, read `templates/voice.md` in this plugin.
 The swipe file is the user's own evidence from `/ig-viral` about which formulas
 are landing in their niche right now, and it outranks anything in this file.
 The log stops the plan repeating a theme from the last fortnight.

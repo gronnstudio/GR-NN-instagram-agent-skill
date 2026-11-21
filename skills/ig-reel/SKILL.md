@@ -11,6 +11,11 @@ description: >-
 
 # ig-reel
 
+> **GRØNN:** lees eerst `templates/voice.md` in deze plugin (twee mappen boven
+> deze skill), of `~/.claude/instagram/voice.md` als die bestaat. Die huisregels
+> gaan voor alles hieronder: Nederlands, geen hashtags, nooit twee keer dezelfde
+> emoji, dienst + plaats in de tekst, niets hergebruiken, nooit publiceren.
+
 Turns one raw idea into a Reel that somebody finishes.
 
 Two tools live in this folder and they both actually run. Use them. Do not
@@ -24,10 +29,11 @@ python3 beats.py script.txt --target 30     # timed beat sheet before you shoot
 
 ## Before you write
 
-1. Read `~/.claude/instagram/voice.md` if it exists. That is the user's voice
-   profile: how they talk on camera, what they never say, who they are talking
-   to. If it does not exist, ask for **three of their own reels**, transcribe or
-   read them, infer the voice, and write the file. A script in the wrong voice
+1. Read `~/.claude/instagram/voice.md` if it exists, otherwise
+   `templates/voice.md` in this plugin (the GRØNN voice). That is the user's
+   voice profile: how they talk on camera, what they never say, who they are
+   talking to. Hooks and scripts are Dutch; `hookscore.py` and `beats.py`
+   score Dutch the same way as English. A script in the wrong voice
    is unusable, because they have to say it out loud.
 2. Read `hooks.json` in this folder. 26 formulas, each with a template, a filled
    example, the on-screen version, what it is for, and how it gets ruined.

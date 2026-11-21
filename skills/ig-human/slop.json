@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "note": "Lexicon used by humanize.py and detect.py. Replacements are plain-English and keep the sentence grammatical. The last block of each list is Instagram-specific: caption and voiceover slop that does not show up on other platforms. Edit freely - it is meant to be yours.",
+  "note": "Lexicon used by humanize.py and detect.py. Replacements are plain-English and keep the sentence grammatical. The last block of each list is Instagram-specific: caption and voiceover slop that does not show up on other platforms. Edit freely - it is meant to be yours. GRØNN fork: Dutch entries are appended to each list; Dutch replacements are plain Dutch.",
   "invisible": [
     {
       "cp": "U+200B",
@@ -630,6 +630,121 @@
       "find": "hack",
       "replace": "trick",
       "family": "nouns"
+    },
+    {
+      "find": "naadloos",
+      "replace": "soepel",
+      "family": "adjectives"
+    },
+    {
+      "find": "naadloze",
+      "replace": "soepele",
+      "family": "adjectives"
+    },
+    {
+      "find": "cruciaal",
+      "replace": "belangrijk",
+      "family": "adjectives"
+    },
+    {
+      "find": "cruciale",
+      "replace": "belangrijke",
+      "family": "adjectives"
+    },
+    {
+      "find": "essentieel",
+      "replace": "nodig",
+      "family": "adjectives"
+    },
+    {
+      "find": "holistisch",
+      "replace": "compleet",
+      "family": "adjectives"
+    },
+    {
+      "find": "holistische",
+      "replace": "complete",
+      "family": "adjectives"
+    },
+    {
+      "find": "optimaal",
+      "replace": "goed",
+      "family": "adjectives"
+    },
+    {
+      "find": "optimale",
+      "replace": "goede",
+      "family": "adjectives"
+    },
+    {
+      "find": "ontzorgen",
+      "replace": "regelen",
+      "family": "verbs"
+    },
+    {
+      "find": "ontzorgt",
+      "replace": "regelt",
+      "family": "verbs"
+    },
+    {
+      "find": "creëren",
+      "replace": "maken",
+      "family": "verbs"
+    },
+    {
+      "find": "creëer",
+      "replace": "maak",
+      "family": "verbs"
+    },
+    {
+      "find": "realiseren",
+      "replace": "maken",
+      "family": "verbs"
+    },
+    {
+      "find": "faciliteren",
+      "replace": "regelen",
+      "family": "verbs"
+    },
+    {
+      "find": "transformeren",
+      "replace": "veranderen",
+      "family": "verbs"
+    },
+    {
+      "find": "transformeert",
+      "replace": "verandert",
+      "family": "verbs"
+    },
+    {
+      "find": "tuinparadijs",
+      "replace": "tuin",
+      "family": "nouns"
+    },
+    {
+      "find": "groene oase",
+      "replace": "tuin",
+      "family": "nouns"
+    },
+    {
+      "find": "gamechanger",
+      "replace": "verschil",
+      "family": "nouns"
+    },
+    {
+      "find": "game changer",
+      "replace": "verschil",
+      "family": "nouns"
+    },
+    {
+      "find": "bovendien",
+      "replace": "ook",
+      "family": "connectives"
+    },
+    {
+      "find": "next level",
+      "replace": "beter",
+      "family": "adjectives"
     }
   ],
   "phrases": [
@@ -922,6 +1037,66 @@
       "find": "go viral overnight",
       "replace": "get reach",
       "family": "nouns"
+    },
+    {
+      "find": "in de huidige snelle wereld",
+      "replace": "nu",
+      "family": "openers"
+    },
+    {
+      "find": "in de wereld van vandaag",
+      "replace": "nu",
+      "family": "openers"
+    },
+    {
+      "find": "laten we eens kijken naar",
+      "replace": "",
+      "family": "openers"
+    },
+    {
+      "find": "duik met ons in",
+      "replace": "kijk naar",
+      "family": "openers"
+    },
+    {
+      "find": "duik in",
+      "replace": "kijk naar",
+      "family": "openers"
+    },
+    {
+      "find": "het is belangrijk om te benadrukken dat",
+      "replace": "",
+      "family": "connectives"
+    },
+    {
+      "find": "het is geen geheim dat",
+      "replace": "",
+      "family": "openers"
+    },
+    {
+      "find": "al met al",
+      "replace": "",
+      "family": "closers"
+    },
+    {
+      "find": "kortom",
+      "replace": "",
+      "family": "closers"
+    },
+    {
+      "find": "tot slot",
+      "replace": "",
+      "family": "closers"
+    },
+    {
+      "find": "til je tuin naar een hoger niveau",
+      "replace": "maak je tuin beter",
+      "family": "verbs"
+    },
+    {
+      "find": "naar een hoger niveau",
+      "replace": "beter",
+      "family": "verbs"
     }
   ],
   "structures": [
@@ -969,9 +1144,9 @@
     },
     {
       "id": "hashtag-wall",
-      "regex": "(?:#\\w+[ \\t]*){5,}",
-      "name": "Hashtag wall (5+)",
-      "fix": "Three hashtags. LinkedIn stopped rewarding the wall."
+      "regex": "(?:^|\\s)#\\w+",
+      "name": "Hashtag (GRØNN: geen hashtags)",
+      "fix": "Haal elke hashtag weg. GRØNN gebruikt geen hashtags; zoekwoorden (dienst + plaats) staan gewoon in de zin."
     },
     {
       "id": "as-an-ai",
@@ -1020,6 +1195,36 @@
       "regex": "(?i)\\b(?:follow for more|tag someone who|double tap if|share this if|comment below if)\\b",
       "name": "Reflex follow or tag bait",
       "fix": "Ask for the one action this post actually earns. The generic ask trains the audience to ignore every ask."
+    },
+    {
+      "id": "niet-alleen-het-is",
+      "regex": "(?i)\\bhet is niet (?:alleen|zomaar) [^.!?\\n]{2,60}[,.] het is\\b",
+      "name": "\"Het is niet alleen X, het is Y\"",
+      "fix": "Zeg het ene dat je bedoelt. Schrap de aanloop."
+    },
+    {
+      "id": "niet-alleen-maar-ook",
+      "regex": "(?i)\\bniet alleen\\b[^.!?\\n]{2,80}\\bmaar ook\\b",
+      "name": "\"Niet alleen X maar ook Y\"",
+      "fix": "Maak er twee zinnen van, of laat de zwakste helft weg."
+    },
+    {
+      "id": "nl-stop-scroll",
+      "regex": "(?i)\\b(?:stop met scrollen|niet (?:door)?scrollen)\\b",
+      "name": "\"Stop met scrollen\"",
+      "fix": "Om aandacht vragen bewijst dat je hem niet verdiend hebt. Open op de inhoud."
+    },
+    {
+      "id": "nl-in-deze-video",
+      "regex": "(?i)\\b(?:in deze (?:video|reel|post)|ik laat (?:je|jullie) zien)\\b",
+      "name": "Video-aanloop",
+      "fix": "Schrap de aankondiging en begin bij de uitkomst."
+    },
+    {
+      "id": "nl-follow-bait",
+      "regex": "(?i)\\b(?:volg (?:voor meer|ons|mij)|tag iemand die|dubbeltik als|deel dit als|laat een reactie achter als)\\b",
+      "name": "Reflex-volg- of tagvraag",
+      "fix": "Vraag de ene actie die deze post verdient, bij GRØNN meestal: stuur een foto."
     }
   ]
 }

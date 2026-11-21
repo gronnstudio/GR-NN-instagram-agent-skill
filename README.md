@@ -1,4 +1,29 @@
-# The Instagram agent skill
+# The Instagram agent skill · GRØNN Studio fork
+
+Fork of [Jakeschincariol/instagram-agent-skill](https://github.com/Jakeschincariol/instagram-agent-skill)
+(MIT), adjusted for @gronn.studio:
+
+- `hookscore.py`, `beats.py`, `detect.py` and `humanize.py` read Dutch as well
+  as English: Dutch word lists, euro amounts, Dutch units and month names,
+  `je/jij/u` as speaking to the viewer, and a Dutch slop lexicon.
+- `caption.py` follows the GRØNN rules: no hashtags, never the same emoji
+  twice, Dutch asks ("stuur een foto"), and a check for a service plus a place
+  in Stein en omgeving.
+- `templates/voice.md` is filled in with the GRØNN voice and house rules, and
+  every skill reads it first.
+- `python3 tests/test_nl.py` checks that all of this still runs on Dutch
+  examples (no dependencies).
+
+Install in Claude Code:
+
+```
+/plugin marketplace add gronnstudio/GR-NN-instagram-agent-skill
+/plugin install instagram-agent@gronn-instagram
+```
+
+The original README follows.
+
+---
 
 Thirteen Claude skills that run an Instagram account. Free, MIT, no signup, no
 API key, nothing to connect.
@@ -166,7 +191,7 @@ python3 detect.py before.txt after.txt       # prove the delta
   survive copy-paste and they are invisible in every editor you own.
 - **Typography.** Em dash to comma, en dash to hyphen, curly quotes to
   straight, ellipsis to three dots, and the orphaned punctuation that leaves.
-- **The lexicon.** 154 stock words and phrases with plain-English replacements.
+- **The lexicon.** 189 stock words and phrases with plain-English replacements.
   The last block of it is Instagram-specific: "stop scrolling", "in today's
   video", "follow for more", "tag someone who needs this", "the algorithm
   loves", "run don't walk". It lives in
@@ -318,7 +343,7 @@ skills/ig-reel/hooks.json          26 hook formulas: template, example, on-scree
 skills/ig-reel/hookscore.py        the five-property hook panel
 skills/ig-reel/beats.py            script to timed beat sheet
 skills/ig-caption/caption.py       the truncation preview and the caption linter
-skills/ig-human/slop.json          the lexicon: 154 terms, 18 invisible classes, 16 tells
+skills/ig-human/slop.json          the lexicon: 189 terms, 18 invisible classes, 21 tells
 skills/ig-human/humanize.py        the three cleaning passes
 skills/ig-human/detect.py          the five-check panel
 skills/ig-viral/swipe.py           outlier ranking and formula classification
