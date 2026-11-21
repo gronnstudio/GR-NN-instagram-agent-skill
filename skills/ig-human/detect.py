@@ -33,11 +33,18 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 LEX = os.path.join(HERE, "slop.json")
 
 SENT_RE = re.compile(r"[^.!?\n]+[.!?]*")
-WORD_RE = re.compile(r"[A-Za-z']+")
+WORD_RE = re.compile(r"[A-Za-zÀ-ÖØ-öø-ÿ']+")
 CONTRACTIONS = re.compile(r"\b\w+'(?:s|t|re|ve|ll|d|m)\b", re.IGNORECASE)
-PRONOUNS = re.compile(r"\b(i|me|my|mine|we|us|our|you|your)\b", re.IGNORECASE)
-NUMBERS = re.compile(r"\b\d[\d,.]*%?\b|\$\d")
-PROPER = re.compile(r"(?<![.!?]\s)(?<!^)\b[A-Z][a-z]{2,}\b", re.MULTILINE)
+PRONOUNS = re.compile(r"\b(i|me|my|mine|we|us|our|you|your"
+                      r"|ik|mij|mijn|wij|ons|onze|je|jij|jouw|jullie|u|uw)\b", re.IGNORECASE)
+NUMBERS = re.compile(r"\b\d[\d,.]*%?\b|[$€]\s?\d")
+PROPER = re.compile(r"(?<![.!?]\s)(?<!^)\b[A-ZÀ-ÖØ-Þ][a-zß-öø-ÿ]{2,}\b", re.MULTILINE)
+# GRØNN fork: Dutch has almost no contractions, so a Dutch draft would lose
+# points on VOICE for being Dutch. Count function words to tell the two apart.
+NL_WORDS = {"de", "het", "een", "en", "niet", "van", "ik", "je", "dat", "is",
+            "voor", "met", "op", "zijn", "geen", "ook", "maar", "wat", "jouw"}
+EN_WORDS = {"the", "a", "and", "not", "of", "i", "you", "that", "is", "for",
+            "with", "on", "are", "no", "also", "but", "what", "your", "to"}
 
 
 def clamp(n):
@@ -118,11 +125,17 @@ def check_fingerprint(text):
     return score, detail
 
 
+def is_dutch(w):
+    low = [x.lower() for x in w]
+    return sum(x in NL_WORDS for x in low) > sum(x in EN_WORDS for x in low)
+
+
 def check_voice(text, lex):
     """Contractions, person, and the shapes models default to."""
     w = words(text)
     if len(w) < 25:
         return 50.0, "too short to judge"
+    dutch = is_dutch(w)
     per100 = 100 / len(w)
     contractions = len(CONTRACTIONS.findall(text)) * per100
     person = len(PRONOUNS.findall(text)) * per100
@@ -138,14 +151,18 @@ def check_voice(text, lex):
             names.append(s["id"])
     bullets = [len(b.split()) for b in re.findall(r"(?m)^\s*[-*•]\s+(.+)$", text)]
     uniform = (len(bullets) >= 3 and statistics.pstdev(bullets) < 1.6)
-    score = (scale(contractions, human=3.0, machine=0.0) * 0.35
-             + scale(person, human=8.0, machine=1.0) * 0.35
-             + clamp(100 - tells * 22) * 0.30)
+    if dutch:   # no contractions to count, so person and tells carry it
+        score = (scale(person, human=8.0, machine=1.0) * 0.55
+                 + clamp(100 - tells * 22) * 0.45)
+    else:
+        score = (scale(contractions, human=3.0, machine=0.0) * 0.35
+                 + scale(person, human=8.0, machine=1.0) * 0.35
+                 + clamp(100 - tells * 22) * 0.30)
     if uniform:
         score -= 12
         names.append("uniform-bullets")
-    detail = (f"{contractions:.1f} contractions, {person:.1f} personal pronouns "
-              f"per 100 words, {tells} structural tell(s)")
+    detail = (("Dutch, contractions not counted" if dutch else f"{contractions:.1f} contractions")
+              + f", {person:.1f} personal pronouns per 100 words, {tells} structural tell(s)")
     if names:
         detail += " [" + ", ".join(names[:4]) + "]"
     return clamp(score), detail

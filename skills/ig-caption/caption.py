@@ -19,6 +19,10 @@ Usage
   python3 caption.py caption.txt --keywords "proposal software,client contract"
   pbpaste | python3 caption.py -
   python3 caption.py caption.txt --json
+
+GRØNN fork: no hashtags at all (any tag fails), no emoji used twice, Dutch
+asks are recognised, and every caption is checked for a service word and a
+place in "Stein en omgeving", because that is what people type into search.
 """
 
 import argparse
@@ -26,21 +30,28 @@ import json
 import re
 import sys
 import textwrap
+from collections import Counter
 
 LIMIT = 2200             # Instagram's hard caption limit.
 TRUNCATE = 125           # Roughly where the feed cuts to "... more".
-HASHTAG_LIMIT = 5        # Instagram's cap per post or reel since 18 Dec 2025,
-                         # down from 30. Announced by the @Creators account:
-                         # "using fewer (up to 5) more targeted hashtags,
-                         # rather than many generic ones, can improve both your
-                         # content's performance and people's experience".
+HASHTAG_LIMIT = 0        # GRØNN rule (Nick, 9 Nov 2026): no hashtags. Search
+                         # terms go in the sentences instead. Instagram's own
+                         # cap is 5 per post since 18 Dec 2025.
+
+# What people in the area type into search. Service + place, in plain words.
+DIENSTEN = ["vijver", "tuin", "tuinaanleg", "tuinontwerp", "onderhoud", "border",
+            "beplanting", "terras", "bestrating", "waterval", "beekloop", "snoei"]
+PLAATSEN = ["Stein", "Elsloo", "Urmond", "Berg aan de Maas", "Meers", "Nieuwdorp",
+            "Kerensheide", "Beek", "Geleen", "Sittard", "Born", "Geulle", "Bunde",
+            "Meerssen", "Ulestraten", "Spaubeek", "Schinnen", "Nuth", "Maastricht",
+            "Valkenburg", "Heerlen", "Susteren", "Limburg", "Westelijke Mijnstreek"]
 
 HASHTAG_RE = re.compile(r"(?:^|\s)(#[A-Za-z0-9_]+)")
 MENTION_RE = re.compile(r"(?:^|\s)(@[A-Za-z0-9_.]+)")
 LINK_RE = re.compile(r"https?://\S+|\bwww\.\S+|\b[a-z0-9-]+\.(?:com|co|io|net|org|ai|app)/\S*",
                      re.IGNORECASE)
 EMOJI_RE = re.compile(r"[\U0001F300-\U0001FAFF☀-➿←-⇿️]")
-CONCRETE_RE = re.compile(r"\$\s?\d|\b\d[\d,.]*\b|(?<!^)\b[A-Z][a-z]{2,}\b", re.MULTILINE)
+CONCRETE_RE = re.compile(r"[$€]\s?\d|\b\d[\d,.]*\b|(?<!^)\b[A-ZÀ-ÖØ-Þ][a-zß-öø-ÿ]{2,}\b", re.MULTILINE)
 
 ASKS = [
     (re.compile(r"(?i)\bcomment (?:the word |\")?[A-Z0-9]{2,}\b"), "comment a keyword"),
@@ -51,6 +62,15 @@ ASKS = [
     (re.compile(r"(?i)\blink in (?:my )?bio\b"), "link in bio"),
     (re.compile(r"(?i)\b(?:swipe|tap) (?:through|left|right|for|to)\b"), "swipe or tap"),
     (re.compile(r"(?i)\btell me\b|\bwhat would you\b|\bwhich one\b"), "answer a question"),
+    # Dutch
+    (re.compile(r"(?i)\bstuur (?:me |mij |ons )?(?:een )?(?:foto|dm|bericht)\b|\bapp (?:me|mij|ons)\b"),
+     "stuur een foto / app"),
+    (re.compile(r"(?i)\bbewaar (?:dit|deze|hem|het)\b"), "bewaar dit"),
+    (re.compile(r"(?i)\bdeel (?:dit|deze|hem|het)\b|\bstuur (?:dit|deze) door\b"), "deel dit"),
+    (re.compile(r"(?i)\bvolg (?:me|mij|ons)\b"), "volg"),
+    (re.compile(r"(?i)\blink in (?:mijn |de )?bio\b"), "link in bio"),
+    (re.compile(r"(?i)\breageer met\b|\bvertel (?:me|het)\b|\bwelke (?:kies|zou) je\b"), "reageer"),
+    (re.compile(r"(?i)\bplan (?:een )?kennismaking\b|\bbel (?:me|mij)\b"), "kennismaking / bellen"),
 ]
 
 FILLER_TAGS = {"#viral", "#fyp", "#explore", "#explorepage", "#foryou", "#foryoupage",
@@ -118,8 +138,8 @@ def analyse(text, cut=TRUNCATE, keywords=None):
         + ("" if CONCRETE_RE.search(window) else " - nothing checkable before the tap"))
 
     if len(tags) > HASHTAG_LIMIT:
-        add("HASHTAGS", "FAIL", f"{len(tags)} tags, over Instagram's cap of {HASHTAG_LIMIT}. "
-                                "Tags past the fifth do not count and the block reads as old")
+        add("HASHTAGS", "FAIL", f"{len(tags)} tag(s) ({' '.join(tags[:3])}). GRØNN uses no "
+                                "hashtags: put the search words in a sentence instead")
     elif len(tags) == HASHTAG_LIMIT and filler:
         add("HASHTAGS", "WARN", f"{len(tags)} tags, at the cap, and "
                                 f"{len(filler)} of them generic. Spend the five on topics")
@@ -153,6 +173,20 @@ def analyse(text, cut=TRUNCATE, keywords=None):
     add("EMOJI", "WARN" if density > 4 else "PASS",
         f"{len(emoji)} emoji, {density:.1f} per 100 characters"
         + (" - reads as decoration" if density > 4 else ""))
+
+    # GRØNN: emoji are welcome, but never the same one twice.
+    twice = [e for e, n in Counter(e for e in emoji if e != "\ufe0f").items() if n > 1]
+    add("EMOJI TWICE", "FAIL" if twice else "PASS",
+        f"used more than once: {' '.join(twice)}" if twice else "every emoji is different")
+
+    low = stripped.lower()
+    dienst = [d for d in DIENSTEN if d in low]
+    # Case-sensitive on purpose: "Beek" is a town, "beek" is a stream.
+    plaats = [p for p in PLAATSEN if re.search(r"\b" + re.escape(p) + r"\b", stripped)]
+    add("DIENST + PLAATS", "PASS" if dienst and plaats else "WARN",
+        (f"service: {dienst[0] if dienst else 'none'}, place: {plaats[0] if plaats else 'none'}")
+        + ("" if dienst and plaats else
+           ". Put what you do and where (\"vijver in Stein\") in a normal sentence"))
 
     if keywords:
         low = stripped.lower()

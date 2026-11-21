@@ -28,6 +28,11 @@ Usage
   python3 hookscore.py --hook "I lost $18,000 on one missing contract."
   pbpaste | python3 hookscore.py -
   python3 hookscore.py hooks.txt --json
+
+GRØNN fork: Dutch hooks score the same way as English ones. The word lists
+below hold both languages (they barely overlap), euro amounts and Dutch units
+count as concrete, and "je/jij/u" counts as speaking to the viewer.
+  python3 hookscore.py --hook "Je vijver kleurt groen door één fout in maart."
 """
 
 import argparse
@@ -36,14 +41,16 @@ import re
 import statistics
 import sys
 
-WORD_RE = re.compile(r"[A-Za-z0-9$%'’-]+")
+WORD_RE = re.compile(r"[A-Za-zÀ-ÖØ-öø-ÿ0-9$€%²'’-]+")
 NUMBER_RE = re.compile(
-    r"\$\s?\d[\d,]*(?:\.\d+)?"                       # money, whole
-    r"|\b\d[\d,]*(?:\.\d+)?\s?"                      # a figure, with or
+    r"[$€]\s?\d[\d,.]*"                              # money, $ or €
+    r"|\b\d[\d,.]*\s?"                               # a figure, with or
     r"(?:%|k\b|x\b|hrs?\b|hours?\b|mins?\b|minutes?\b"  # without a unit
-    r"|days?\b|weeks?\b|months?\b|years?\b)?",
+    r"|days?\b|weeks?\b|months?\b|years?\b"
+    r"|uur\b|minuten\b|dagen\b|weken\b|maanden\b|jaar\b|euro\b"  # Dutch
+    r"|m²|m2\b|m3\b|liter\b|cm\b|meter\b)?",
     re.IGNORECASE)
-PROPER_RE = re.compile(r"(?<!^)\b[A-Z][a-z]{2,}\b")
+PROPER_RE = re.compile(r"(?<!^)\b[A-ZÀ-ÖØ-Þ][a-zß-öø-ÿ]{2,}\b")
 HASHTAG_RE = re.compile(r"(?:^|\s)#\w+")
 EMOJI_RE = re.compile(r"[\U0001F300-\U0001FAFF☀-➿]")
 
@@ -56,10 +63,23 @@ SPOKEN_NUMBERS = {
     "ten", "eleven", "twelve", "fifteen", "twenty", "thirty", "forty", "fifty",
     "sixty", "seventy", "eighty", "ninety", "hundred", "thousand", "million",
     "billion", "dozen", "half", "twice", "triple",
+    # Dutch. "een" is absent for the same reason "one" is.
+    "nul", "twee", "drie", "vier", "vijf", "zes", "zeven", "acht", "negen",
+    "tien", "elf", "twaalf", "vijftien", "twintig", "dertig", "veertig",
+    "vijftig", "honderd", "duizend", "miljoen", "helft", "dubbel", "anderhalf",
 }
 MONEY_WORDS = {
     "dollars", "dollar", "bucks", "grand", "percent", "cents",
     "millionaire", "billionaire", "revenue", "profit", "salary", "rent",
+    "euro", "euro's", "procent", "prijs", "kosten", "winst", "huur",
+}
+
+# Dutch month names are lower case, so the proper-noun check misses them.
+# "In maart" is as concrete as "in March".
+DATE_WORDS = {
+    "januari", "februari", "maart", "april", "mei", "juni", "juli",
+    "augustus", "september", "oktober", "november", "december",
+    "voorjaar", "najaar", "winter", "zomer", "lente", "herfst",
 }
 
 # Words that put something on the line. A hook with none of these is a
@@ -76,6 +96,16 @@ STAKES = {
     "before", "until", "instead", "but", "except", "unless", "problem",
     "risk", "danger", "warning", "regret", "wish", "should", "shouldn't",
     "still", "already", "only", "without", "versus", "vs", "actually",
+    # Dutch
+    "nooit", "niet", "geen", "niemand", "niks", "niets", "fout", "fouten",
+    "verkeerd", "kwijt", "verloren", "verlies", "kost", "kostte", "duur",
+    "kapot", "dood", "mislukt", "gratis", "betaald", "bespaard", "bespaar",
+    "eerst", "eerste", "verboden", "slechtste", "haat", "zonde", "verspild",
+    "waarheid", "geheim", "verborgen", "voordat", "totdat", "maar",
+    "behalve", "tenzij", "probleem", "risico", "gevaar", "waarschuwing",
+    "spijt", "moet", "moeten", "hoeft", "nog", "alleen", "zonder",
+    "eigenlijk", "groen", "troebel", "algen", "stinkt", "lekt", "lek",
+    "vergeet", "weggegooid",
 }
 
 # Openers that spend the first second saying nothing.
@@ -86,6 +116,11 @@ WEAK_OPENERS = [
     "have you", "did you", "do you", "are you", "in this", "in today",
     "the thing", "a lot", "there is", "there are", "this is", "it is",
     "as a", "when it", "if you've", "you know",
+    # Dutch
+    "dus", "oké", "oke", "hoi", "hallo", "hey", "jongens", "vandaag",
+    "eigenlijk", "eerlijk gezegd", "kijk", "luister", "even", "ik wil",
+    "heb je", "wist je", "ben je", "weet je", "in deze", "in de video",
+    "er is", "er zijn", "dit is", "het is", "als je", "zoals je", "welkom",
 ]
 
 # Imperatives that earn the front position.
@@ -93,17 +128,23 @@ IMPERATIVES = {
     "stop", "steal", "copy", "delete", "try", "watch", "read", "save",
     "use", "build", "make", "write", "send", "take", "start", "quit",
     "never", "always", "don't", "dont", "do", "put", "run", "check",
+    # Dutch
+    "doe", "koop", "gooi", "bewaar", "probeer", "lees", "maak", "plant",
+    "snoei", "begin", "vergeet", "gebruik", "zet", "leg", "graaf", "stuur",
+    "nooit", "altijd", "laat", "hou", "houd", "voer", "check",
 }
 
 DEALBREAKERS = [
-    (re.compile(r"(?i)^\s*(?:stop scrolling|don'?t scroll)"),
+    (re.compile(r"(?i)^\s*(?:stop scrolling|don'?t scroll|stop met scrollen|niet (?:door)?scrollen)"),
      "Opens with \"stop scrolling\". Asking for attention proves you have not earned it."),
-    (re.compile(r"(?i)\b(?:in (?:this|today'?s) (?:video|reel)|i'?m going to show you|i'?ll show you how)\b"),
+    (re.compile(r"(?i)\b(?:in (?:this|today'?s) (?:video|reel)|i'?m going to show you|i'?ll show you how"
+                r"|in (?:deze|de video van vandaag) (?:video|reel)?|ik (?:ga )?(?:je|jullie) (?:laten zien|uitleggen)"
+                r"|ik laat (?:je|jullie) zien)\b"),
      "Video preamble. Delete it and open on the payoff."),
-    (re.compile(r"(?i)^\s*(?:hey |hi |what'?s up |welcome )"),
+    (re.compile(r"(?i)^\s*(?:hey |hi |what'?s up |welcome |hoi |hallo |welkom |goedemorgen |dag allemaal)"),
      "Greeting. Nobody came to the feed to be greeted."),
     (HASHTAG_RE,
-     "Hashtag in the hook. Hashtags belong at the bottom of the caption, if anywhere."),
+     "Hashtag in the hook. GRØNN uses no hashtags at all."),
     (EMOJI_RE,
      "Emoji in the hook. On-screen text at hook size has room for words or for an emoji, not both."),
 ]
@@ -114,8 +155,8 @@ def clamp(n):
 
 
 def words(text):
-    # "$18,000" is one word when it is spoken, so it is one word here too.
-    return WORD_RE.findall(re.sub(r"(?<=\d),(?=\d)", "", text))
+    # "$18,000" and "€2.500" are one word when spoken, so one word here too.
+    return WORD_RE.findall(re.sub(r"(?<=\d)[,.](?=\d{3}\b)", "", text))
 
 
 def check_length(text):
@@ -140,7 +181,7 @@ def check_specificity(text):
     nums = [n.strip() for n in NUMBER_RE.findall(text) if n.strip()]
     propers = set(PROPER_RE.findall(text))
     low = [w.lower().strip("'’") for w in words(text)]
-    spoken = [w for w in low if w in SPOKEN_NUMBERS or w in MONEY_WORDS]
+    spoken = [w for w in low if w in SPOKEN_NUMBERS or w in MONEY_WORDS or w in DATE_WORDS]
     hits = len(nums) + len(propers) + len(spoken)
     score = 15.0 if hits == 0 else clamp(45 + hits * 30)
     found = ", ".join(nums[:2] + sorted(propers)[:2] + spoken[:2])
@@ -153,7 +194,7 @@ def check_stakes(text):
     w = [x.lower().strip("'’") for x in words(text)]
     hits = [x for x in w if x in STAKES]
     markers = sorted(set(hits))
-    if re.search(r"\$\s?\d", text):
+    if re.search(r"[$€]\s?\d", text):
         markers.append("a price")
     n = len(markers)
     score = {0: 20.0, 1: 70.0}.get(n, 100.0)
@@ -178,6 +219,7 @@ def check_frontload(text):
     payload = None
     for i, token in enumerate(low):
         if (token in STAKES or token in SPOKEN_NUMBERS or token in MONEY_WORDS
+                or token in DATE_WORDS
                 or NUMBER_RE.match(w[i]) or (i and PROPER_RE.match(w[i]))):
             payload = i
             break
@@ -201,11 +243,11 @@ def check_address(text):
     """Aimed at one viewer, or floating in the air."""
     low = text.lower()
     w = [x.lower().strip("'’") for x in words(text)]
-    if re.search(r"\b(you|your|you're|youre|yourself)\b", low):
+    if re.search(r"\b(you|your|you're|youre|yourself|je|jij|jouw|jullie|u|uw|jezelf)\b", low):
         return 100.0, "speaks to the viewer"
     if w and w[0] in IMPERATIVES:
         return 90.0, f"imperative opener (\"{w[0]}\")"
-    if re.search(r"\b(i|my|me|we|our)\b", low):
+    if re.search(r"\b(i|my|me|we|our|ik|mijn|wij|ons|onze|mij)\b", low):
         return 70.0, "first person, no viewer named"
     return 35.0, "third person, nobody in the room"
 

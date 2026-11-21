@@ -26,15 +26,24 @@ import json
 import re
 import sys
 
-WORD_RE = re.compile(r"[A-Za-z0-9$%'’-]+")
+WORD_RE = re.compile(r"[A-Za-zÀ-ÖØ-öø-ÿ0-9$€%²'’-]+")
 SENT_RE = re.compile(r"[^.!?]+[.!?]*")
-CONCRETE_RE = re.compile(r"\$\s?\d|\b\d[\d,.]*\b|(?<!^)\b[A-Z][a-z]{2,}\b", re.MULTILINE)
+CONCRETE_RE = re.compile(r"[$€]\s?\d|\b\d[\d,.]*\b|(?<!^)\b[A-ZÀ-ÖØ-Þ][a-zß-öø-ÿ]{2,}\b"
+                         r"|\b(?:januari|februari|maart|april|mei|juni|juli|augustus"
+                         r"|september|oktober|november|december)\b", re.MULTILINE)
 STOPWORDS = {
     "the", "a", "an", "and", "or", "but", "if", "of", "to", "in", "on", "for",
     "with", "that", "this", "it", "is", "are", "was", "were", "be", "been",
     "you", "your", "i", "my", "me", "we", "our", "they", "them", "he", "she",
     "so", "just", "not", "no", "do", "did", "does", "have", "has", "had",
     "will", "can", "at", "as", "by", "from", "out", "up", "off", "one", "all",
+    # Dutch
+    "de", "het", "een", "en", "of", "maar", "als", "van", "naar", "in", "op",
+    "voor", "met", "dat", "dit", "die", "deze", "is", "zijn", "was", "waren",
+    "je", "jij", "jouw", "u", "uw", "ik", "mijn", "mij", "wij", "we", "ons",
+    "onze", "zij", "ze", "hij", "hem", "haar", "dus", "niet", "geen", "doe",
+    "heb", "hebt", "heeft", "had", "zal", "kan", "bij", "uit", "aan", "om",
+    "er", "ook", "nog", "al", "wel", "zo", "te",
 }
 
 HOOK_WINDOW = 3.0        # seconds. Past this, the thumb has already decided.
@@ -43,8 +52,8 @@ ABSTRACT_RUN = 3         # beats in a row with nothing checkable in them.
 
 
 def words(text):
-    # "$18,000" is one word when it is spoken, so it is one word here too.
-    return WORD_RE.findall(re.sub(r"(?<=\d),(?=\d)", "", text))
+    # "$18,000" and "€2.500" are one word when spoken, so one word here too.
+    return WORD_RE.findall(re.sub(r"(?<=\d)[,.](?=\d{3}\b)", "", text))
 
 
 def pretty(token):

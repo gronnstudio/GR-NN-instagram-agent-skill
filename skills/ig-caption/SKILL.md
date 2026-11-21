@@ -2,7 +2,7 @@
 name: ig-caption
 description: >-
   Write the Instagram caption - the line that survives the "... more" cut, the
-  body, the single ask, the search terms and the three hashtags - and lint it
+  body, the single ask and the search terms (no hashtags, GRØNN rule) - and lint it
   before it goes out. Use when the user says "write the caption", "caption this",
   "what do I put in the description", has a reel or a carousel ready and needs
   the text, or asks about hashtags.
@@ -10,11 +10,16 @@ description: >-
 
 # ig-caption
 
+> **GRØNN:** lees eerst `templates/voice.md` in deze plugin (twee mappen boven
+> deze skill), of `~/.claude/instagram/voice.md` als die bestaat. Die huisregels
+> gaan voor alles hieronder: Nederlands, geen hashtags, nooit twee keer dezelfde
+> emoji, dienst + plaats in de tekst, niets hergebruiken, nooit publiceren.
+
 One tool lives in this folder and it runs:
 
 ```bash
 python3 caption.py caption.txt
-python3 caption.py caption.txt --keywords "client proposals,agency pricing"
+python3 caption.py caption.txt --keywords "vijver,Stein"
 ```
 
 It prints the caption the way the feed prints it: the first 125 characters in a
@@ -46,39 +51,29 @@ Line 1      125 characters of visible space. Job A: the ask, plainly.
             character.
 Body        short paragraphs, one line of white space between each. Two to six
             of them. This is where the search terms live.
-The ask     one. Comment a keyword, save it, or DM. One.
-Hashtags    up to five, on their own line at the bottom, or none.
+The ask     one. For GRØNN almost always: stuur een foto (WhatsApp). One.
+Hashtags    none. GRØNN uses no hashtags.
 ```
 
 Limit is 2,200 characters and almost nothing needs 2,200. A caption that earns
 the tap and then delivers 600 characters beats one that delivers 1,800.
 
-## Hashtags, honestly
+## Hashtags: none
 
-Hashtags are not a reach lever any more, and the platform has now said so with
-a product change. **Instagram capped hashtags at five per post on 18 December
-2025**, down from thirty, telling creators that "using fewer (up to 5) more
-targeted hashtags, rather than many generic ones" performs better. Adam Mosseri
-had already said in February 2025 that hashtags do not work to increase reach
-and are a label, not a distribution lever.
+GRØNN uses no hashtags (Nick, 9 November 2026). Instagram itself says they are
+a label, not a reach lever, and capped them at five per post on 18 December
+2025. `caption.py` fails any caption with a hashtag in it.
 
-So: up to five, specific, as topic labels. If the user has a block of twenty
-saved in their notes app, that block is now dead weight and the linter will
-fail it.
+## Search terms do the work instead
 
-`#viral`, `#fyp`, `#explorepage`, `#foryou` describe nothing. Cut them.
-
-## Search terms matter more than hashtags now
-
-Instagram search reads the caption text. So the phrase the user wants to be
-found for goes in the caption as a phrase a human would type, in a sentence
-that reads normally. "Client proposals" as words in line three, not
-"#clientproposals" in a block at the bottom.
-
-Ask for two or three of those terms, then pass them to the linter:
+Instagram search reads the caption text. So what Nick does and where goes in
+the caption as a phrase a human would type, in a sentence that reads normally:
+"vijver in Stein", "natuurlijke tuin in Elsloo". Always one service and one
+place in "Stein en omgeving". `caption.py` checks that on its own
+(DIENST + PLAATS); pass the exact terms when you want them checked too:
 
 ```bash
-python3 caption.py draft.txt --keywords "client proposals,agency pricing"
+python3 caption.py draft.txt --keywords "vijverrenovatie,Stein"
 ```
 
 ## Rules
@@ -91,8 +86,12 @@ python3 caption.py draft.txt --keywords "client proposals,agency pricing"
   `Comment "the contract guide"` does not.
 - **Write the first comment separately** if there is a link. Say so in the
   receipt.
-- **Emoji as punctuation, not decoration.** The linter flags anything over
-  4 per 100 characters.
+- **Emoji yes, but never the same one twice.** Not in one caption, and not in
+  this week's other captions (check `~/.claude/instagram/log.md`). The linter
+  fails a repeated emoji and flags anything over 4 per 100 characters.
+- **Dutch by default.** Quote posts carry English on the image; the caption
+  under them may stay Dutch.
+- **Never reuse text.** No hook or sentence that was already posted.
 - **Alt text is worth 20 seconds.** For carousels and photos, write it. It is
   read by screen readers and by Instagram.
 
@@ -110,10 +109,13 @@ python3 caption.py draft.txt --keywords "client proposals,agency pricing"
 CAPTION READY
 job:        A - the reel carries the hook
 visible:    118 of 125 characters used before the cut
-ask:        one, comment CONTRACT
-hashtags:   3
-search:     "client proposals" in line 3, "agency pricing" in line 5
+ask:        one, stuur een foto
+hashtags:   0
+emoji:      2, all different
+search:     "vijver" and "Stein" in line 1
 linter:     READY
 ```
 
-Nothing is posted. The user pastes it.
+Nothing is posted. Deliver the caption as text (and images as loose files);
+Nick uploads it himself. Add the hook and the photos used to
+`~/.claude/instagram/log.md` so they are never used again.

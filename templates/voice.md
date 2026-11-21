@@ -1,67 +1,91 @@
-# voice.md
+# voice.md · GRØNN Studio
 
-Copy this to `~/.claude/instagram/voice.md` and fill it in. Every skill in the
-pack reads it. Ten minutes here is the difference between scripts you shoot and
-scripts you rewrite.
+De huisregels voor @gronn.studio. Elke skill in deze plugin leest dit bestand
+eerst, en wat hier staat gaat voor alles wat in een SKILL.md staat.
 
-If you would rather not fill it in by hand, send Claude three of your own reels
-or captions and say "write my voice.md from these". That works better than
-guessing at the answers.
-
-This file matters more on Instagram than anywhere else, because you have to say
-the words out loud. A line you would never say is not a draft, it is a retake.
+Een eigen kopie op `~/.claude/instagram/voice.md` gaat voor dit bestand. Zonder
+die kopie geldt dit bestand zoals het hier staat.
 
 ---
 
-## Who I am
+## Wie ik ben
 
-- **Name:**
-- **Handle:**
-- **What I do, in one sentence:**
-- **Who I am talking to:** (be specific: "photographers charging under $2,000",
-  not "creatives")
-- **What I sell:**
+- **Naam:** Nick Peters, GRØNN Studio
+- **Handle:** @gronn.studio
+- **Wat ik doe, in één zin:** Ik maak en onderhoud vijvers en natuurlijke tuinen
+  voor huiseigenaren in Stein en omgeving, met een vaste prijs vooraf.
+- **Tegen wie ik praat:** huiseigenaren in Stein en omgeving (Stein plus zo'n
+  30 km) met een vijver die groen of lek is, of een tuin die natuurlijker en
+  rustiger moet. Zeg "Stein en omgeving", niet "Westelijke Mijnstreek".
+- **Wat ik verkoop:** vijvers (nieuw, renovatie, onderhoud), natuurlijke tuinen
+  (ontwerp, aanleg, onderhoud), borders.
 
-## What I sound like
+## De regels (Nick, vast)
 
-- **Three of my own reels or captions that sound most like me:** (paste them)
-- **On camera I am:** (fast and loud / dry / calm / funny / deadpan)
-- **Words I actually use:**
-- **Words I would never say out loud:**
-- **Do I swear:** (yes / mild / no)
-- **Emoji in captions:** (never / one, rarely / freely)
-- **Face on camera:** (always / sometimes / faceless)
-- **Voiceover or to-camera:**
-- **Pace:** (words per minute, if you have timed yourself reading a script.
-  `beats.py --wpm` uses this. Most people are between 150 and 200.)
+1. **Captions zijn Nederlands**, tenzij Nick iets anders vraagt.
+2. **Een sterke hook.** De eerste regel draagt de post. Draai `hookscore.py`
+   (Reels) of `caption.py` (alles) voor je iets laat zien.
+3. **Emoji mag, maar nooit twee keer dezelfde**, niet in één caption en niet in
+   de captions van dezelfde week. `caption.py` zakt op een dubbele emoji.
+4. **Zoekwoorden in de zin:** wat ik doe + waar, zoals een mens het intypt.
+   "vijver in Stein", "natuurlijke tuin in Elsloo". `caption.py` controleert
+   dat er een dienst en een plaats in staan.
+5. **Geen hashtags.** Nul. Ook niet onderaan.
+6. **Quote-posts zijn altijd Engels**, met het witte logo met de oranje P
+   (woordmerk primair) op een donker vlak. De caption eronder mag Nederlands.
+7. **Nooit iets hergebruiken.** Geen foto en geen tekst die al eerder gepost is.
+   Kijk in `~/.claude/instagram/log.md` voor je een foto of zin kiest, en
+   schrijf na elke levering op welke foto's en welke hook je gebruikt hebt.
+8. **Bestanden leveren, nooit publiceren.** Lever de caption als tekst en
+   beelden als losse bestanden (geen zip). Nick uploadt zelf. Geen
+   publicatietool, geen planner, geen automatische reacties.
 
-## My positions
+## Hoe ik klink
 
-Three to five things I believe that some of my audience does not. These are
-where the good reels come from.
+- **Toon:** rustig, vakkundig, eerlijk. Een vakman die uitlegt wat hij ziet,
+  geen verkoper. Korte zinnen. Je-vorm tegen de lezer.
+- **Woorden die ik gebruik:** vijver, helder water, groen water, filter, pomp,
+  oeverplanten, zuurstofplanten, natuurlijke tuin, border, vaste prijs vooraf,
+  kennismaking, "stuur een foto".
+- **Woorden die ik nooit zeg:** groene oase, tuinparadijs, ontzorgen,
+  naadloos, holistisch, creëren, next level, gamechanger. (`/ig-human` haalt
+  ze eruit.)
+- **Vloeken:** nee.
+- **Gezicht in beeld:** ja, Nick zelf aan het werk.
+- **Tempo:** onbekend; `beats.py` rekent met 165 woorden per minuut tot Nick
+  zichzelf getimed heeft.
 
-1.
-2.
-3.
+## Waar ik voor sta
 
-## Off limits
+1. Helder water komt uit balans (planten, diepte, stroming), niet uit een
+   filter dat je elke week schoonspoelt.
+2. Een vaste prijs vooraf, geen nacalculatie die de klant overvalt.
+3. Natuurlijk en rustig gaat voor druk en "strak".
 
-- **Topics I do not post about:**
-- **Clients, numbers or names I cannot say publicly:**
-- **Claims I am not allowed to make:** (regulated industry, employer policy, NDA)
+## Niet doen
 
-## Proof I can use
+- **Geen straat, huisnummer of postcode**, niet van mij en niet van klanten.
+  Een plaatsnaam is genoeg.
+- **Geen minderjarigen in beeld**, ook niet met toestemming van de klant.
+- **Klantnamen alleen met toestemming.** Anders "een klant in Stein".
+- **Geen ®-teken** zolang het merk niet geregistreerd is.
+- **Sfeerbeelden (stock) zijn geen bewijs van werk.** Nooit doen alsof een
+  stockfoto of AI-beeld een project van GRØNN is.
+- **Nooit een getal verzinnen.** Prijzen komen van gronn.studio of van Nick.
+  Ontbreekt een getal, zet dan `{{getal van Nick}}` in het concept.
 
-Real numbers, outcomes and stories I am happy to put my name on. The skills will
-never invent one, so if this section is empty, every draft comes back with
-`{{your number}}` in it.
+## Bewijs dat ik mag gebruiken
 
--
--
--
+- Vijverrenovatie (foto's met toestemming van de klant), op
+  gronn.studio/werk.
+- Terras in Geulle.
+- Nick aan de steenzaagtafel (eigen video's).
+- Prijzen: zoals ze op gronn.studio staan op de dag van schrijven.
 
-## The ask
+## De vraag
 
-- **My keyword CTA, if I use one:** (one word, sayable, no spaces)
-- **What the keyword sends them:**
-- **Where my link goes:**
+- **Vaste call to action:** "Stuur een foto" (WhatsApp), voor vragen over een
+  vijver of tuin. Eén vraag per post.
+- **Link:** gronn.studio, in de bio. Nooit een link in de caption.
+- **Bio:** Vijvers en natuurlijke tuinen / Ontwerp, aanleg, onderhoud /
+  Stein en omgeving · vaste prijs vooraf / Groen water? Stuur een foto.
